@@ -5,6 +5,7 @@ import requests
 from datetime import datetime
 from configparser import ParsingError
 from config import config
+from main import main
 
 path_vacancies = './vacancies.json'
 
@@ -189,29 +190,28 @@ class DBManager:
         self.conn.commit()
         self.conn.close()
 
-    def save_database_employee(self):
+   def save_database_employee(self):
         try:
 
             with self.conn:
                 with self.conn.cursor() as cur:
-                    with open(path, 'r', encoding='UTF-8') as file:
-                        reader = json.DictReader(file)
-                        for i in reader:
-                            employee_id = i['employee_id'],
-                            employee_name = i['employee_name'],
-                            publish_date = i['date'],
-                            area = i['area']
-                            cur.execute("INSERT INTO employee VALUES (%s, %s, %s, %s)", (
-                                employee_id,
-                                employee_name,
-                                publish_date,
-                                area
-                            ))
-                            cur.execute("SELECT * FROM employee")
+                    reader = main()
+                    for i in reader:
+                        employee_id = i['employee_id'],
+                        employee_name = i['employee_name'],
+                        publish_date = i['date'],
+                        area = i['area']
+                        cur.execute("INSERT INTO employee VALUES (%s, %s, %s, %s)", (
+                            employee_id,
+                            employee_name,
+                            publish_date,
+                            area
+                        ))
+                        cur.execute("SELECT * FROM employee")
 
-                            datas = cur.fetchall()
-                            for data in datas:
-                                print(data)
+                        datas = cur.fetchall()
+                        for data in datas:
+                            print(data)
 
         finally:
             self.conn.close()
@@ -221,32 +221,31 @@ class DBManager:
 
             with self.conn:
                 with self.conn.cursor() as cur:
-                    with open(path, 'r', encoding='UTF-8') as file:
-                        reader = json.DictReader(file)
-                        for i in reader:
-                            vacancies_id = i['vacancies_id']
-                            employee_id = i['employee_id'],
-                            vacancies_name = i['title'],
-                            salary_from = i['salary_from'],
-                            salary_to = i['salary_to'],
-                            currency = i['currency'],
-                            requirements = i['requirements'],
-                            url = f"https://hh.ru/vacancy/{i['items'][0]['id']}",
-                            cur.execute("INSERT INTO vacancies VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (
-                                vacancies_id,
-                                employee_id,
-                                vacancies_name,
-                                salary_from,
-                                salary_to,
-                                currency,
-                                requirements,
-                                url,
-                            ))
-                            cur.execute("SELECT * FROM vacancies")
+                    reader = main()
+                    for i in reader:
+                        vacancies_id = i['vacancies_id']
+                        employee_id = i['employee_id'],
+                        vacancies_name = i['title'],
+                        salary_from = i['salary_from'],
+                        salary_to = i['salary_to'],
+                        currency = i['currency'],
+                        requirements = i['requirements'],
+                        url = f"https://hh.ru/vacancy/{i['items'][0]['id']}",
+                        cur.execute("INSERT INTO vacancies VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (
+                            vacancies_id,
+                            employee_id,
+                            vacancies_name,
+                            salary_from,
+                            salary_to,
+                            currency,
+                            requirements,
+                            url,
+                        ))
+                        cur.execute("SELECT * FROM vacancies")
 
-                            datas = cur.fetchall()
-                            for data in datas:
-                                print(data)
+                        datas = cur.fetchall()
+                        for data in datas:
+                            print(data)
 
         finally:
             self.conn.commit()
